@@ -16,7 +16,7 @@
             <RowDefinition Height="28*"></RowDefinition>
         </Grid.RowDefinitions>
         <TextBlock Text="Enter Text" HorizontalAlignment="Center" FontSize="20" Name="DialogTitle" FontWeight="Bold" Grid.Row="0"></TextBlock>
-        <TextBlock Text="Text" HorizontalAlignment="Center" FontSize="15" Name="DialogText" Grid.Row="1" Width="300" TextAlignment="Center" Margin="47,0,47,6"/>
+        <TextBlock Text="Text" HorizontalAlignment="Center" FontSize="15" Name="DialogText" Grid.Row="1" Width="300" Height="120" TextAlignment="Center" Margin="47,0,47,6"/>
         <Button Height="25" Width="50" Grid.Row="2" HorizontalAlignment="Center"  Click="ButtonBase_OnClick" Content="OK" FontSize="11"></Button>
     </Grid>
 </Window>

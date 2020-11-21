@@ -33,7 +33,7 @@ namespace mangadex_sharp_scraper
             {
                 List<string> e = new List<string>();
                 
-                e.Add(this.Server + this.Hash + "/" + page);
+                e.Add(this.Hash + "/" + page);
                 PageURLs = e;
             }
 

@@ -9,9 +9,11 @@ Copyright (C) 2020, hernikplays
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,7 +25,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
+using Ookii.Dialogs.Wpf;
 using RestSharp;
 
 namespace mangadex_sharp_scraper
@@ -33,6 +37,8 @@ namespace mangadex_sharp_scraper
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string SavePath;
+        private Manga manga;
         public MainWindow()
         {
             InitializeComponent();
@@ -48,19 +54,26 @@ namespace mangadex_sharp_scraper
                 return;
             }
 
-            
+
             int id;
             try
             {
-               id = int.Parse(IdBox.Text);
+                id = int.Parse(IdBox.Text);
             }
             catch (Exception exception)
             {
                 MessageBox.Show(exception.Message);
                 return;
             }
-
-            Manga manga = MangaDex.GetMangaInfo(id);
+            if(SavePath == null)
+            {
+                var show = new DialogBox();
+                show.DialogText.Text = "Please select where to save the pages \nusing 'Select download location' button";
+                show.DialogTitle.Text="Error";
+                show.ShowDialog();
+                return;
+            }
+            manga = MangaDex.GetMangaInfo(id);
             if (manga.StatusCode != 200)
             {
                 DialogBox box = new DialogBox();
@@ -80,8 +93,8 @@ namespace mangadex_sharp_scraper
                         box.DialogText.Text = $"Error {manga.StatusCode}";
                         break;
                 }
-                 box.ShowDialog();
-                 return;
+                box.ShowDialog();
+                return;
             }
 
             if (AllCMB.SelectedIndex == 0)
@@ -97,16 +110,41 @@ namespace mangadex_sharp_scraper
                         i++;
                         Dispatcher.Invoke(() =>
                         {
-                            ProgressText.Text = $"Forming page URL for page no. {i}\nTask will be completed in approximately {(manga.Chapters.Count - i)*2}s";
+                            ProgressText.Text = $"Forming page URL for page no. {i}\nTask will be completed in approximately {(manga.Chapters.Count - i) * 2}s";
                         });
+                        MessageBox.Show(filled[0].PageURLs[1]);
                         Thread.Sleep(2000);
                     }
 
+                    var ch = 1;
                     foreach (Chapters chap in filled)
                     {
-                        //chap.GetPageURLs();
-                        MessageBox.Show(chap.PageURLs[0]);
+                        var l = 1;
+                        foreach (string page in chap.PageURLs)
+                        {
+                            var RClient = new RestClient(chap.Server);
+                            var req = new RestRequest(page);
 
+                            var download = RClient.DownloadData(req);
+                            string dlPath;
+                            string vol = (chap.Volume == null)?"?":chap.Volume;
+                            string chn = (chap.Chapter == null)?"?":chap.Chapter;
+                            if (l < 10) dlPath = $"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}\\0{l}{System.IO.Path.GetExtension(page)}";
+                            else dlPath = $"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}\\{l}{System.IO.Path.GetExtension(page)}";
+                            
+                            if(!Directory.Exists($"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}")) Directory.CreateDirectory($"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}");
+                            MessageBox.Show(Regex.Replace(dlPath,"/[/\\?%*:|\"<>]/g",""));
+                            File.WriteAllBytes(Regex.Replace(dlPath,"/[/\\?%*:|\"<>]/g",""), download);
+                            
+                            Dispatcher.Invoke(() =>
+                            {
+                                ProgressText.Text = $"Downloading page no. {l} of chapter number {ch}";
+                            });
+                            l++;
+                            
+                            Thread.Sleep(2000);
+                        }
+                        ch++;
                     }
                 })
                 {
@@ -123,8 +161,19 @@ namespace mangadex_sharp_scraper
                 box.DialogText.Text = "This function is not yet implemented.";
                 box.ShowDialog();
             }
-            
 
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new VistaFolderBrowserDialog();
+            var result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                SavePath = dialog.SelectedPath;
+            }
         }
     }
 }
