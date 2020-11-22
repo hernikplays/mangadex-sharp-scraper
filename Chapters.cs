@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,10 +32,11 @@ namespace mangadex_sharp_scraper
             if(Pages.Length <1) throw new Exception("No pages found for chapter");
             foreach (string page in this.Pages)
             {
+                Trace.WriteLine(page);
                 List<string> e = new List<string>();
                 
                 e.Add(this.Hash + "/" + page);
-                PageURLs = e;
+                this.PageURLs = e;
             }
 
             return this;
