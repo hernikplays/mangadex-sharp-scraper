@@ -30,15 +30,15 @@ namespace mangadex_sharp_scraper
         public Chapters GetPageURLs()
         {
             if(Pages.Length <1) throw new Exception("No pages found for chapter");
+            List<string> e = new List<string>();
             foreach (string page in this.Pages)
             {
                 Trace.WriteLine(page);
-                List<string> e = new List<string>();
                 
                 e.Add(this.Hash + "/" + page);
-                this.PageURLs = e;
+                
             }
-
+            this.PageURLs = e;
             return this;
         }
     }

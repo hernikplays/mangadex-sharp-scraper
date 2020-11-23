@@ -9,6 +9,7 @@ Copyright (C) 2020, hernikplays
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -65,11 +66,11 @@ namespace mangadex_sharp_scraper
                 MessageBox.Show(exception.Message);
                 return;
             }
-            if(SavePath == null)
+            if (SavePath == null)
             {
                 var show = new DialogBox();
                 show.DialogText.Text = "Please select where to save the pages \nusing 'Select download location' button";
-                show.DialogTitle.Text="Error";
+                show.DialogTitle.Text = "Error";
                 show.ShowDialog();
                 return;
             }
@@ -102,20 +103,36 @@ namespace mangadex_sharp_scraper
                 MangaName.Text = manga.Title;
                 List<Chapters> filled = new List<Chapters>();
                 int i = 0;
+                string selLang = ((ComboBoxItem)CountrySelect.SelectedValue).Tag.ToString();
                 Thread loopThread = new Thread(() =>
                 {
                     foreach (ChapterLite chapter in manga.Chapters)
                     {
-                        filled.Add(MangaDex.GetChapterInfo(chapter.Id));
-                        i++;
-                        Dispatcher.Invoke(() =>
+                        if (chapter.Language == selLang)
                         {
-                            ProgressText.Text = $"Forming page URL for page no. {i}\nTask will be completed in approximately {(manga.Chapters.Count - i) * 2}s";
-                        });
-                        MessageBox.Show(filled[0].PageURLs[1]);
-                        Thread.Sleep(2000);
+                            Dispatcher.Invoke(() =>
+                            {
+                                ProgressText.Text = $"Getting chapter information for chapter no. {i+1}";
+                            });
+                            filled.Add(MangaDex.GetChapterInfo(chapter.Id));
+                            i++;
+                            Trace.WriteLine("Loopuju");
+
+                            Thread.Sleep(2500);
+                        }
                     }
 
+                    if (filled.Count < 1)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            var show = new DialogBox();
+                            show.DialogText.Text = "No chapters with selected language found";
+                            show.DialogTitle.Text = "Error";
+                            show.ShowDialog();
+                        });
+                        return;
+                    }
                     var ch = 1;
                     foreach (Chapters chap in filled)
                     {
@@ -125,27 +142,37 @@ namespace mangadex_sharp_scraper
                             var RClient = new RestClient(chap.Server);
                             var req = new RestRequest(page);
 
-                            var download = RClient.DownloadData(req);
+                            //var download = RClient.DownloadData(req);
+                            var response = RClient.Execute(req);
+                            MessageBox.Show(response.StatusDescription);
+
                             string dlPath;
-                            string vol = (chap.Volume == null)?"?":chap.Volume;
-                            string chn = (chap.Chapter == null)?"?":chap.Chapter;
+                            string vol = (chap.Volume == null) ? "?" : chap.Volume;
+                            string chn = (chap.Chapter == null) ? "?" : chap.Chapter;
                             if (l < 10) dlPath = $"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}\\0{l}{System.IO.Path.GetExtension(page)}";
                             else dlPath = $"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}\\{l}{System.IO.Path.GetExtension(page)}";
-                            
-                            if(!Directory.Exists($"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}")) Directory.CreateDirectory($"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}");
-                            MessageBox.Show(Regex.Replace(dlPath,"/[/\\?%*:|\"<>]/g",""));
-                            File.WriteAllBytes(Regex.Replace(dlPath,"/[/\\?%*:|\"<>]/g",""), download);
-                            
+
+                            if (!Directory.Exists($"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}")) Directory.CreateDirectory($"{SavePath}\\{manga.Title}\\Vol. {vol} Ch. {chn}");
+                            File.WriteAllBytes(Regex.Replace(dlPath, "/[/\\?%*:|\"<>]/g", ""), response.RawBytes);
+
                             Dispatcher.Invoke(() =>
                             {
                                 ProgressText.Text = $"Downloading page no. {l} of chapter number {ch}";
                             });
                             l++;
-                            
-                            Thread.Sleep(2000);
+
+                            Thread.Sleep(2500);
                         }
                         ch++;
                     }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        DialogBox end = new DialogBox();
+                        end.DialogTitle.Text = "Task Completed";
+                        end.DialogText.Text = "Completed downloading";
+                        end.ShowDialog();
+                    });
                 })
                 {
                     Name = "Loop Thread",
