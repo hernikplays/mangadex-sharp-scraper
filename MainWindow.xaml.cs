@@ -144,7 +144,6 @@ namespace mangadex_sharp_scraper
 
                             //var download = RClient.DownloadData(req);
                             var response = RClient.Execute(req);
-                            MessageBox.Show(response.StatusDescription);
 
                             string dlPath;
                             string vol = (chap.Volume == null) ? "?" : chap.Volume;
