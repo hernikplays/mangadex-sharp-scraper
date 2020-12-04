@@ -100,6 +100,7 @@ namespace mangadex_sharp_scraper
 
             if (AllCMB.SelectedIndex == 0)
             {
+                // START MANGADEX ALL DOWNLOAD
                 MangaName.Text = manga.Title;
                 List<Chapters> filled = new List<Chapters>();
                 int i = 0;
@@ -178,7 +179,7 @@ namespace mangadex_sharp_scraper
                     IsBackground = true
                 };
                 loopThread.Start();
-
+                // END MANGADEX ALL DOWNLOAD
             }
             else if (AllCMB.SelectedIndex == 1)
             {
@@ -199,6 +200,19 @@ namespace mangadex_sharp_scraper
             if (result == true)
             {
                 SavePath = dialog.SelectedPath;
+            }
+        }
+
+        private void AllCMB_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (AllCMB.SelectedIndex)
+            {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                default:
+                    break;
             }
         }
     }

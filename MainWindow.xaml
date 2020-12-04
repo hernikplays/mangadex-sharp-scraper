@@ -15,7 +15,7 @@
             <TextBox Name="IdBox" MaxWidth="400"></TextBox>
             <Button Click="Button_Click" Content="Select download location" HorizontalAlignment="Center"></Button>
             <TextBlock Text="Download All or Only Some chapters?" TextAlignment="Center" FontSize="15"></TextBlock>
-            <ComboBox HorizontalAlignment="Center" Name="AllCMB" Margin="0,-19,0,0">
+            <ComboBox HorizontalAlignment="Center" Name="AllCMB" Margin="0,-19,0,0" SelectionChanged="AllCMB_OnSelectionChanged">
                 <ComboBoxItem IsSelected="True">All</ComboBoxItem>
                 <ComboBoxItem>Only Some</ComboBoxItem>
             </ComboBox>
