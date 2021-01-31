@@ -9,8 +9,8 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
-        <ui:SimpleStackPanel Margin="12" Spacing="24" HorizontalAlignment="Center">
-            <TextBlock Text="Mangadex Scraper" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" />
+        <ui:SimpleStackPanel Margin="12" Spacing="24" HorizontalAlignment="Center" Name="MainPanel">
+            <TextBlock Text="MangaDex Scraper" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" />
             <TextBlock Text="Enter manga ID" TextAlignment="Center" FontSize="15" Name="IdBlock" Margin="0,10,0,-10.05"></TextBlock>
             <TextBox Name="IdBox" MaxWidth="400"></TextBox>
             <Button Click="Button_Click" Content="Select download location" HorizontalAlignment="Center"></Button>
@@ -27,10 +27,12 @@
                 <ComboBoxItem Tag="ru">Russian</ComboBoxItem>
                 <ComboBoxItem Tag="sa">Arabic</ComboBoxItem>
             </ComboBox>
-            <Button Content="Start" HorizontalAlignment="Center" Click="ButtonBase_OnClick" Margin="0,-7,0,7"/>
+            <Button Content="Start" HorizontalAlignment="Center" Name="StartBtn"  Click="ButtonBase_OnClick" Margin="0,-7,0,7"/>
             <TextBlock Name="MangaName" FontSize="15" HorizontalAlignment="Center"></TextBlock>
             <TextBlock Name="ProgressText" FontSize="13" HorizontalAlignment="Center"></TextBlock>
         </ui:SimpleStackPanel>
-        
+        <ui:SimpleStackPanel Margin="12" Spacing="24" HorizontalAlignment="Center" Name="SelectPanel" Visibility="Collapsed">
+
+        </ui:SimpleStackPanel>
     </Grid>
 </Window>

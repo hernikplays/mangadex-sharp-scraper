@@ -14,9 +14,16 @@ namespace mangadex_sharp_scraper
     /// </summary>
     public partial class App : Application
     {
-        private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        public App()
         {
-            MessageBox.Show(e.Exception.Message);
+            this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
         }
+
+        void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            string errorMessage = string.Format("An unhandled exception occurred: {0}", e.Exception.Message);
+            MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
+        } // https://stackoverflow.com/questions/1472498/wpf-global-exception-handler
     }
 }

@@ -107,7 +107,7 @@ namespace mangadex_sharp_scraper
                 string selLang = ((ComboBoxItem)CountrySelect.SelectedValue).Tag.ToString();
                 Thread loopThread = new Thread(() =>
                 {
-                    foreach (ChapterLite chapter in manga.Chapters)
+                    foreach (var chapter in manga.Chapters)
                     {
                         if (chapter.Language == selLang)
                         {
@@ -183,13 +183,50 @@ namespace mangadex_sharp_scraper
             }
             else if (AllCMB.SelectedIndex == 1)
             {
-                DialogBox box = new DialogBox();
-                box.DialogTitle.Text = "Info";
-                box.DialogText.Text = "This function is not yet implemented.";
-                box.ShowDialog();
+                MangaDex.GetChapterInfo(manga.Id);
+                string selLang = ((ComboBoxItem)CountrySelect.SelectedValue).Tag.ToString();
+                Thread chThread = new Thread(() =>
+                {
+                    List<Chapters> filled = new List<Chapters>();
+                    int i = 1;
+                    foreach (var litechap in manga.Chapters) //* Gets chapter info
+                    {
+                        if (litechap.Language == selLang)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                ProgressText.Text = $"Getting chapter information for chapter no. {i}";
+                            });
+                            filled.Add(MangaDex.GetChapterInfo(litechap.Id));
+                            i++;
+                            Thread.Sleep(2500);
+                        }
+                    }
+                    Grid chGrid = new Grid{ColumnDefinitions = { new ColumnDefinition(), new ColumnDefinition(), new ColumnDefinition() }};
+                    int rIndex = 0;
+                    int cIndex = 0;
+                    foreach (var ch in filled) //* Creates grid with buttons for each chapter
+                    {
+                        if (cIndex == 3)
+                        {
+                            cIndex = 0;
+                            chGrid.RowDefinitions.Add(new RowDefinition());
+                            rIndex++;
+                        }
+                        Button b = new Button{Content = string.IsNullOrEmpty(ch.Title)?"Chapter "+ch.Chapter:ch.Title,Tag = ch.Id};
+                        b.SetValue(Grid.RowProperty, rIndex);
+                        b.SetValue(Grid.ColumnProperty, cIndex);
+                        chGrid.Children.Add(b);
+                        cIndex++;
+                    }
+                    SelectPanel.Children.Insert(0,chGrid); //* Add grid to the stackpanel
+                    
+                })
+                {
+                    Name = "Loop Thread",
+                    IsBackground = true
+                };
             }
-
-
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -205,15 +242,11 @@ namespace mangadex_sharp_scraper
 
         private void AllCMB_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch (AllCMB.SelectedIndex)
+            if (AllCMB.SelectedIndex == 1)
             {
-                case 0:
-                    break;
-                case 1:
-                    break;
-                default:
-                    break;
+                StartBtn.Content = "Find Chapters";
             }
+            else StartBtn.Content = "Start";
         }
     }
 }
