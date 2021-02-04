@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MangadexSharpScraper" Height="700" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
-        ui:WindowHelper.UseModernWindowStyle="True">
+        ui:WindowHelper.UseModernWindowStyle="True" Loaded="MainWindow_OnLoaded">
     <Grid>
         <ui:SimpleStackPanel Margin="12" Spacing="24" HorizontalAlignment="Center" Name="MainPanel">
             <TextBlock Text="MangaDex Scraper" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" />

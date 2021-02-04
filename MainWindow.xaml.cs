@@ -40,6 +40,7 @@ namespace mangadex_sharp_scraper
     {
         private string SavePath;
         private Manga manga;
+        private bool WindowLoaded = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -220,7 +221,8 @@ namespace mangadex_sharp_scraper
                         cIndex++;
                     }
                     SelectPanel.Children.Insert(0,chGrid); //* Add grid to the stackpanel
-                    
+                    MainPanel.Visibility = Visibility.Collapsed;
+                    SelectPanel.Visibility = Visibility.Visible;
                 })
                 {
                     Name = "Loop Thread",
@@ -242,11 +244,19 @@ namespace mangadex_sharp_scraper
 
         private void AllCMB_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (AllCMB.SelectedIndex == 1)
+            if (WindowLoaded)
             {
-                StartBtn.Content = "Find Chapters";
+                if (AllCMB.SelectedIndex == 1)
+                {
+                    StartBtn.Content = "Find Chapters";
+                }
+                else StartBtn.Content = "Start";
             }
-            else StartBtn.Content = "Start";
+        }
+
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            WindowLoaded = true;
         }
     }
 }
