@@ -21,14 +21,12 @@ jobs:
         run: dotnet publish -r linux-x64 --configuration Release
       - name: Build for Windows
         run: dotnet publish -r win-x64 --configuration Release
-      - name: Use zip
-        uses: montudor/action-zip@v1.0.0
+      - name: tonybogdanov-zip
+        uses: TonyBogdanov/zip@1.0
       - name: Zip Linux
-        run: zip -qq -r linux-release.zip linux-x64
-        working-directory: mangadex-sharp-scraper/bin/release/net5.0
+        run: zip -qq -r ./linux-release.zip ./mangadex-sharp-scraper/bin/release/net5.0/linux-x64/linux-x64
       - name: Zip Windows
-        run: zip -qq -r windows-release.zip win-x64
-        working-directory: mangadex-sharp-scraper/bin/release/net5.0
+        run: zip -qq -r ./windows-release.zip ./mangadex-sharp-scraper/bin/release/net5.0/linux-x64/win-x64
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v2
         with:
