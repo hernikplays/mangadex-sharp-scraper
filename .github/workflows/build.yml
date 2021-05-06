@@ -23,6 +23,8 @@ jobs:
         run: dotnet publish -r win-x64 --configuration Release
       - name: tonybogdanov-zip
         uses: TonyBogdanov/zip@1.0
+      - name: test
+        run: dir
       - name: Zip Linux
         run: zip -qq -r ./linux-release.zip ./mangadex-sharp-scraper/bin/release/net5.0/linux-x64/linux-x64
       - name: Zip Windows
