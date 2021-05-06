@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="0.10.0" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Projektanker.Icons.Avalonia" Version="3.1.0" />
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="3.1.0" />
+        <PackageReference Include="RestSharp" Version="106.11.8-alpha.0.14" />
+        <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="106.11.8-alpha.0.14" />
+    </ItemGroup>
+</Project>
