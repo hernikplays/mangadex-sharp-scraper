@@ -18,9 +18,9 @@ jobs:
         with:
           dotnet-version: 5.0.202
       - name: Build for Linux
-        run: dotnet publish -r linux-x64 --configuration ReleaseComplete
+        run: dotnet publish -r linux-x64 --configuration Release
       - name: Build for Windows
-        run: dotnet publish -r win-x64 --configuration ReleaseComplete
+        run: dotnet publish -r win-x64 --configuration Release
       - name: Zip Linux
         uses: montudor/action-zip@v1.0.0
         with:
