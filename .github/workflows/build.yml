@@ -23,12 +23,10 @@ jobs:
         run: dotnet publish -r win-x64 --configuration Release
       - name: tonybogdanov-zip
         uses: TonyBogdanov/zip@1.0
-      - name: test
-        run: cd mangadex-sharp-scraper && dir
       - name: Zip Linux
-        run: zip -qq -r ./linux-release.zip ./mangadex-sharp-scraper/bin/release/net5.0/linux-x64/linux-x64
+        run: zip -qq -r ./linux-release.zip ./mangadex-sharp-scraper/bin/Release/net5.0/linux-x64/linux-x64
       - name: Zip Windows
-        run: zip -qq -r ./windows-release.zip ./mangadex-sharp-scraper/bin/release/net5.0/linux-x64/win-x64
+        run: zip -qq -r ./windows-release.zip ./mangadex-sharp-scraper/bin/Release/net5.0/linux-x64/win-x64
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v2
         with:
