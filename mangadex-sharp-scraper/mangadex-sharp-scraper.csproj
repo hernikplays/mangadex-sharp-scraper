@@ -4,6 +4,9 @@
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
         <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <PublishTrimmed>true</PublishTrimmed>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="0.10.0" />
