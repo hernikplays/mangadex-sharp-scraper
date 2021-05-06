@@ -24,11 +24,13 @@ jobs:
       - name: Zip Linux
         uses: montudor/action-zip@v1.0.0
         with:
-          args: zip -qq -r linux-release.zip . -i mangadex-sharp-scraper/bin/release/net5.0/linux-x64
+          args: zip -qq -r linux-release.zip linux-x64
+          working-directory: mangadex-sharp-scraper/bin/release/net5.0
       - name: Zip Windows
         uses: montudor/action-zip@v1.0.0
         with:
-          args: zip -qq -r windows-release.zip . -i mangadex-sharp-scraper/bin/release/net5.0/win-x64
+          args: zip -qq -r windows-release.zip win-x64
+          working-directory: mangadex-sharp-scraper/bin/release/net5.0
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v2
         with:
