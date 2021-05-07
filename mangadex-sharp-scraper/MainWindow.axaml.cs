@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -79,6 +82,52 @@ namespace mangadex_sharp_scraper
                         var req = new RestRequest(page);
 
                         var response = RClient.Execute(req);
+                        if (response.ErrorException != null || response.StatusCode != HttpStatusCode.OK)
+                        {
+                            if (response.StatusCode == HttpStatusCode.Forbidden)
+                            {
+                                string sitekey = response.Headers.ToList().Find(x => x.Name == "X-Captcha-Sitekey").Value.ToString();
+                                Console.WriteLine(sitekey);
+                            }
+                            else
+                            {
+                                Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                string message;
+                                switch (response.StatusCode)
+                                {
+                                    case HttpStatusCode.NotFound:
+                                        message =
+                                            "Manga not found. Make sure you are entering the new UUID and not the old number ID.";
+                                        break;
+                                    case HttpStatusCode.BadGateway:
+                                        message =
+                                            "There is a problem with the MangaDex servers. Check if you are able to access them or if you have internet access.";
+                                        break;
+                                    case HttpStatusCode.GatewayTimeout:
+                                        message = "The MangaDex servers have timed out.";
+                                        break;
+                                    case HttpStatusCode.ServiceUnavailable:
+                                        message =
+                                            "Service is unavailable.";
+                                        break;
+                                    default:
+                                        message = response.StatusDescription;
+                                        break;
+                                }
+
+                                MessageBox box = new();
+                                box.Content = Utility.GenerateMessageBox("Error", message, box);
+                                if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                                    desktop)
+                                {
+                                    box.ShowDialog(desktop.MainWindow);
+                                }
+                                
+                            });
+                                return;
+                            }
+                        }
 
                         string dlPath;
                         Console.WriteLine(chapter.Attributes.ChapterNumber);
